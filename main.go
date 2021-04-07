@@ -6,11 +6,7 @@ import (
 )
 
 func main()  {
-	server := gin.Default()
-	server.GET("/ping", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "pong",
-		})
-	})
-	server.Run(":2020")
+	 r := gin.Default()
+
+	 r.Run(":2020")
 }
