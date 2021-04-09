@@ -23,26 +23,55 @@ func main()  {
 	 r := gin.Default()
 	authRoute := r.Group("api/user")
 	{
-		//authRoute.POST("/login",authController.Login)
 		authRoute.POST("/register",authController.Register)
-		//authRoute.POST("/reset_password",authController.ForgetPassword)
+		authRoute.POST("/login",authController.Login)
+		authRoute.POST("/reset_password",authController.ForgetPassword)
 	}
-	//userRoute := r.Group("api/user")
-	//{
-	//	userRoute.PATCH("/",userController.Login)
-	//}
-	//investorRoute := r.Group("api/investor")
-	//{
-	//	investorRoute.PATCH("/",userController.Login)
-	//}
-	//borrowerRoute := r.Group("api/borrower")
-	//{
-	//	borrowerRoute.PATCH("/",borrowerController.Login)
-	//}
+
+	userRoute := r.Group("api/user")
+	{
+		userRoute.GET("/",userController.FetchProfile)
+		userRoute.PATCH("/",userController.UpdateProfile)
+		userRoute.PATCH("/",userController.DeleteAccount)
+		userRoute.POST("/next_of_kins",userController.UpdateNextOfKins)
+		userRoute.POST("/send_complain",userController.SendReport)
+
+		transactionRoute := r.Group("account")
+		{
+			transactionRoute.GET("/",userController.FetchAccount)
+			transactionRoute.POST("/add_payment_method",userController.AddCard)
+			transactionRoute.DELETE("/delete_payment_method",userController.RemoveCard)
+			transactionRoute.POST("/fund_acct",userController.FundAccount)
+			transactionRoute.POST("/withdraw_fund",userController.WithdrawFromAccount)
+
+		}
+
+		transactionRoute := r.Group("investor")
+		{
+			transactionRoute.GET("/",userController.FetchAccount)
+			transactionRoute.POST("/add_payment_method",userController.AddCard)
+			transactionRoute.DELETE("/delete_payment_method",userController.RemoveCard)
+			transactionRoute.POST("/fund_acct",userController.FundAccount)
+			transactionRoute.POST("/withdraw_fund",userController.WithdrawFromAccount)
+
+		}
+	}
+
+
+
+
+	investorRoute := r.Group("api/investor")
+	{
+		investorRoute.PATCH("/",userController.Login)
+	}
+	borrowerRoute := r.Group("api/borrower")
+	{
+		borrowerRoute.PATCH("/",borrowerController.Login)
+	}
 
 	 r.Run(":2020")
 }
 
 
 
-//Repository ====> Service ====> Controller ====> Route
+//Route ======> Repository use (Entity) ====> Service(DTO) ====> Controller(helper) ====>

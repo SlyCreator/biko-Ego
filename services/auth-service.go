@@ -5,15 +5,17 @@ import (
 	"github.com/SlyCreator/biko-Ego/entity"
 	"github.com/SlyCreator/biko-Ego/repository"
 	"github.com/mashingan/smapping"
-	//"golang.org/x/crypto/bcrypt"
+	"golang.org/x/crypto/bcrypt"
+
 	"log"
 )
 
 type AuthService interface {
-	//VerifyCredential(email string,password string) interface{}
 	CreateUser(user dto.RegisterDTO) entity.User
-	//FindByEmail(email string) entity.User
 	IsDuplicateEmail(email string) bool
+	VerifyCredential(email string,password string) interface{}
+	//FindByEmail(email string) entity.User
+
 }
 
 type authService struct {
@@ -42,27 +44,26 @@ func (s *authService) IsDuplicateEmail(email string) bool {
 	res := s.userRepository.IsDuplicateEmail(email)
 	return !(res.Error == nil)
 }
-//func (a *authService) VerifyCredential(email string,password string) interface{}  {
-//	res := a.userRepository.VerifyCredential(email,password)
-//	if v ,ok := res.(entity.User); ok{
-//		comparedPassword := comparepassword(v.Password, []byte(password))
-//		if v.Email == email && comparedPassword {
-//			return  res
-//		}
-//		return false
-//	}
-//	return false
-//}
+func (a *authService) VerifyCredential(email string,password string) interface{}  {
+	res := a.userRepository.VerifyCredential(email)
+	if v ,ok := res.(entity.User); ok{
+		comparedPassword := comparePassword(v.Password, []byte(password))
+		if v.Email == email && comparedPassword {
+			return  res
+		}
+		return false
+	}
+	return false
+}
 
 
 
-
-//func comparePassword(hashedPwd string, plainPassword []byte) bool {
-//	byteHash := []byte(hashedPwd)
-//	err := bcrypt.CompareHashAndPassword(byteHash, plainPassword)
-//	if err != nil {
-//		log.Println(err)
-//		return false
-//	}
-//	return true
-//}
+func comparePassword(hashedPwd string, plainPassword []byte) bool {
+	byteHash := []byte(hashedPwd)
+	err := bcrypt.CompareHashAndPassword(byteHash, plainPassword)
+	if err != nil {
+		log.Println(err)
+		return false
+	}
+	return true
+}
